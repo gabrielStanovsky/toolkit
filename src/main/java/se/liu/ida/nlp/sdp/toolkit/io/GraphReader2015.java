@@ -114,6 +114,7 @@ public class GraphReader2015 extends ParagraphReader implements GraphReader {
 				boolean isPred = tokens[5].equals("+");
 				String sense = tokens[6];
 
+
 				Node node = graph.addNode(form, lemma, pos, isTop, isPred, sense);
 				// Make sure that the node ID equals the value of the ID column.
 				assert node.id == Integer.parseInt(tokens[0]);
@@ -127,13 +128,17 @@ public class GraphReader2015 extends ParagraphReader implements GraphReader {
 			int id = 1;
 			for (String line : lines.subList(1, lines.size())) {
 				String[] tokens = line.split(Constants.COLUMN_SEPARATOR);
-
 				// There should be exactly 7 + number of predicates many columns.
 				assert tokens.length == 7 + predicates.size();
+                                if (tokens.length != 7 + predicates.size()) {
+                                    int expected = 7 + predicates.size();
+                                    System.out.println(line);
+                                    System.out.println("Problematic Line: expected #toks = " + expected + "; Actual: " + tokens.length);
+                                }
 
 				for (int i = 7; i < tokens.length; i++) {
 					if (!tokens[i].equals(Constants.UNDEFINED)) {
-						graph.addEdge(predicates.get(i - 7), id, tokens[i]);
+                                            graph.addEdge(predicates.get(i - 7), id, tokens[i]);
 					}
 				}
 				id++;
